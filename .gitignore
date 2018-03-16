@@ -1,0 +1,10 @@
+# Ignore IDEA project files
+/.idea/
+
+# npm
+/node_modules/
+/package-lock.json
+
+# distribution files
+/dist/
+all-chunks-loaded-webpack-plugin-*.tgz
