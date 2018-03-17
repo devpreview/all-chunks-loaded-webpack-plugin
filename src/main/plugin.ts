@@ -80,15 +80,15 @@ export default class AllChunksLoadedWebpackPlugin {
         for (let files of this.chunksFiles.values()) {
             allFiles = allFiles.concat(files);
         }
-        let loadedScript = 'var allChunksLoadedWebpackPluginLoadedFiles = [];\n' +
-            'function allChunksLoadedWebpackPlugin(chunk, file) {\n' +
-            '    var allFiles = [' + allFiles.map(val => '\'' + val + '\'').join(',') + '];\n' +
-            '    if (allChunksLoadedWebpackPluginLoadedFiles.indexOf(file) === -1) {\n' +
-            '        allChunksLoadedWebpackPluginLoadedFiles.push(file);\n' +
-            '    if (allChunksLoadedWebpackPluginLoadedFiles.length === allFiles.length) {\n' +
-            '    setTimeout(function(){' + this.options.callback + '},0);' +
-            '    }\n' +
-            '    }\n' +
+        let loadedScript = 'var allChunksLoadedWebpackPluginLoadedFiles = [];' +
+            'function allChunksLoadedWebpackPlugin(chunk, file) {' +
+            'var allFiles = [' + allFiles.map(val => '\'' + val + '\'').join(',') + '];' +
+            'if(allChunksLoadedWebpackPluginLoadedFiles.indexOf(file) === -1){' +
+            'allChunksLoadedWebpackPluginLoadedFiles.push(file);' +
+            'if(allChunksLoadedWebpackPluginLoadedFiles.length === allFiles.length){' +
+            'setTimeout(function(){' + this.options.callback + '},0);' +
+            '}' +
+            '}' +
             '}';
         return loadedScript;
     }
