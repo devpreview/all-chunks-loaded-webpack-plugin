@@ -6,6 +6,10 @@ export interface AllChunksLoadedWebpackPluginOptions {
 
 export default class AllChunksLoadedWebpackPlugin {
 
+    protected publicPath: string = '';
+    protected chunksFiles = new Map<string, string[]>();
+    protected chunks = new Map<string, string[]>();
+
     public constructor(protected options: AllChunksLoadedWebpackPluginOptions) {
         if (!options.callback) {
             throw new Error('Missing required callback option');
@@ -14,57 +18,66 @@ export default class AllChunksLoadedWebpackPlugin {
 
     public apply(compiler: WebpackCompiler): void {
         compiler.plugin('compilation', (compilation) => {
+            this.publicPath = compilation.options.output.publicPath || '';
             compilation.plugin('html-webpack-plugin-alter-asset-tags', (data: any, next: (err: Error | null, data: any) => void) => {
-                next(null, this.makeLoadedCallback(compilation, data));
+                next(null, this.makeLoadedCallback(data));
             });
         });
     }
 
-    public makeLoadedCallback(compilation: any, data: any): any {
-        let chunksFiles = new Map<string, string[]>();
-        let chunks = new Map<string, string[]>();
+    public makeLoadedCallback(data: any): any {
         for (let chunk of data.chunks) {
             for (let name of chunk.names) {
-                if (!chunks.has(name)) {
-                    chunks.set(name, []);
+                if (!this.chunks.has(name)) {
+                    this.chunks.set(name, []);
                 }
-                chunks.set(name, chunks.get(name).concat(chunk.files));
+                this.chunks.set(name, this.chunks.get(name).concat(chunk.files));
             }
         }
-        const publicPath = compilation.options.output.publicPath || '';
-        const addOnload = function (filename: string, tag: any) {
-            let fname = filename.substring(publicPath.length);
-            if (fname.startsWith('/')) {
-                fname = fname.substring(1);
-            }
-            for (let [chunk, files] of chunks) {
-                if (files.indexOf(fname) > -1) {
-                    if (!chunksFiles.has(chunk)) {
-                        chunksFiles.set(chunk, []);
-                    }
-                    if (chunksFiles.get(chunk).indexOf(filename) === -1) {
-                        let _chunksFiles = chunksFiles.get(chunk);
-                        _chunksFiles.push(filename);
-                        chunksFiles.set(chunk, _chunksFiles);
-                    }
-                    tag.attributes.onload = tag.attributes.onload ? tag.attributes.onload : '';
-                    tag.attributes.onload += "this.onload=null;allChunksLoadedWebpackPlugin('" + chunk + "', '" + filename + "');";
-                    break;
-                }
-            }
-        };
         for (let tag of [].concat(data.head, data.body)) {
             if (tag.tagName === 'script' && tag.attributes && tag.attributes.src) {
-                addOnload(tag.attributes.src, tag);
+                this.addOnload(tag.attributes.src, tag);
             }
             if (tag.tagName === 'link' && tag.attributes && tag.attributes.href) {
                 if (tag.attributes.rel === 'stylesheet' || tag.attributes.as === 'style') {
-                    addOnload(tag.attributes.href, tag);
+                    this.addOnload(tag.attributes.href, tag);
                 }
             }
         }
+        data.head = [{
+            tagName: 'script',
+            attributes: {type: 'text/javascript'},
+            closeTag: true,
+            innerHTML: this.getLoadedScript()
+        }].concat(data.head);
+        return data;
+    }
+
+    protected addOnload(filename: string, tag: any): void {
+        let fname = filename.substring(this.publicPath.length);
+        if (fname.startsWith('/')) {
+            fname = fname.substring(1);
+        }
+        for (let [chunk, files] of this.chunks) {
+            if (files.indexOf(fname) > -1) {
+                if (!this.chunksFiles.has(chunk)) {
+                    this.chunksFiles.set(chunk, []);
+                }
+                if (this.chunksFiles.get(chunk).indexOf(filename) === -1) {
+                    let _chunksFiles = this.chunksFiles.get(chunk);
+                    _chunksFiles.push(filename);
+                    this.chunksFiles.set(chunk, _chunksFiles);
+                }
+                tag.attributes.onload = tag.attributes.onload ? tag.attributes.onload : '';
+                tag.attributes.onload += "this.onload=null;allChunksLoadedWebpackPlugin('" + chunk + "', '" + filename + "');";
+                break;
+            }
+        }
+    }
+
+    protected getLoadedScript(): string {
         let allFiles: string[] = [];
-        for (let files of chunksFiles.values()) {
+        for (let files of this.chunksFiles.values()) {
             allFiles = allFiles.concat(files);
         }
         let loadedScript = 'var allChunksLoadedWebpackPluginLoadedFiles = [];\n' +
@@ -77,13 +90,7 @@ export default class AllChunksLoadedWebpackPlugin {
             '    }\n' +
             '    }\n' +
             '}';
-        data.head = [{
-            tagName: 'script',
-            attributes: {type: 'text/javascript'},
-            closeTag: true,
-            innerHTML: loadedScript
-        }].concat(data.head);
-        return data;
+        return loadedScript;
     }
 
 }
