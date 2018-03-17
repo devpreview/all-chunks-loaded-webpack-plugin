@@ -7,4 +7,4 @@
 
 # distribution files
 /dist/
-all-chunks-loaded-webpack-plugin-*.tgz
+/all-chunks-loaded-webpack-plugin-*.tgz

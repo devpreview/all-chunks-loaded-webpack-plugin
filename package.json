@@ -17,8 +17,14 @@
   "bugs": {
     "url": "https://github.com/devpreview/all-chunks-loaded-webpack-plugin/issues"
   },
-  "main": "index.js",
-  "scripts": {},
+  "main": "dist/plugin.js",
+  "types": "./dist/src/main/plugin.d.ts",
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "webpack --config webpack.config.js --progress --profile --bail",
+    "clean": "rimraf -- dist all-chunks-loaded-webpack-plugin-*.tgz",
+    "clean:all": "npm run clean && rimraf -- node_modules package-lock.json"
+  },
   "bundleDependencies": false,
   "peerDependencies": {
     "html-webpack-plugin": "^3.0.0"
@@ -33,5 +39,9 @@
     "webpack": "3.11.0",
     "webpack-node-externals": "1.6.0"
   },
-  "files": []
+  "files": [
+    "dist/plugin.js",
+    "dist/plugin.js.map",
+    "dist/src/main/plugin.d.ts"
+  ]
 }
