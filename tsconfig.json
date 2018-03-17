@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "strict": true,
+    "strictNullChecks": false,
     "sourceMap": true,
     "types": [
       "node"
