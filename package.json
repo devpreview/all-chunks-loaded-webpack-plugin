@@ -3,8 +3,16 @@
   "version": "0.0.2",
   "deprecated": false,
   "license": "MIT",
-  "description": "",
-  "keywords": [],
+  "description": "Provide callback executed after all chunks loaded",
+  "keywords": [
+    "webpack",
+    "plugin",
+    "html-webpack-plugin",
+    "chunk",
+    "callback",
+    "loaded",
+    "onload"
+  ],
   "author": {
     "name": "Alexey Savchuk",
     "email": "sabo@devpreview.ru"
