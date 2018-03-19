@@ -50,6 +50,7 @@
   "files": [
     "dist/plugin.js",
     "dist/plugin.js.map",
-    "dist/src/main/plugin.d.ts"
+    "dist/src/main/plugin.d.ts",
+    "dist/src/main/callback.d.ts"
   ]
 }
