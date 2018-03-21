@@ -31,9 +31,9 @@ module.exports = {
   
   plugins: [
     new HtmlWebpackPlugin(),
-    new AllChunksLoadedWebpackPlugin(
+    new AllChunksLoadedWebpackPlugin({
       callback: "alert('All chunks loaded!');"
-    ),
+    }),
     ...
   ]
 }
