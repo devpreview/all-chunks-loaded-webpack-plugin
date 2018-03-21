@@ -69,6 +69,30 @@ This will generate a file `dist/index.html` containing the following:
 </html>
 ```
 
+## Options
+You can pass a hash of configuration options to `all-chunks-loaded-webpack-plugin`. Allowed values are as follows:
+
+|Name|Type|Default|Description|
+|:--:|:--:|:-----:|:----------|
+|**`callback`**|`{String}`|`undefined`|Your callback called after all chunks loaded|
+
+Here's an example `webpack` config illustrating how to use these options:
+
+**webpack.config.js**
+```js
+module.exports = {
+  ...
+  
+  plugins: [
+    new HtmlWebpackPlugin(),
+    new AllChunksLoadedWebpackPlugin({
+      callback: '/* Put your callback here */'
+    }),
+    ...
+  ]
+}
+```
+
 ## Credit
 * [HTML Webpack Plugin](https://github.com/jantimon/html-webpack-plugin) - Simplifies creation of HTML files to serve your webpack bundles.
 
