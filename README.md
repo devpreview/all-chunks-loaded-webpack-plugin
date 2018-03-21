@@ -17,6 +17,58 @@ npm install --save-dev all-chunks-loaded-webpack-plugin
 * Latest release: https://github.com/devpreview/all-chunks-loaded-webpack-plugin/releases
 * NPM: https://www.npmjs.com/package/all-chunks-loaded-webpack-plugin
 
+## Usage
+
+The plugin will update all your `webpack` chunks with attribute `onload` contains onload callback. Just add the plugin to your webpack config as follows:
+
+**webpack.config.js**
+```js
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const AllChunksLoadedWebpackPlugin = require('all-chunks-loaded-webpack-plugin');
+
+module.exports = {
+  ...
+  
+  plugins: [
+    new HtmlWebpackPlugin(),
+    new AllChunksLoadedWebpackPlugin(
+      callback: "alert('All chunks loaded!');"
+    ),
+    ...
+  ]
+}
+```
+
+This will generate a file `dist/index.html` containing the following:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Webpack App</title>
+    <script type="text/javascript">
+      var allChunksLoadedWebpackPluginLoadedFiles = [];
+      function allChunksLoadedWebpackPlugin(chunk, file) {
+        var allFiles = ['app.css', 'app.js'];
+        if(allChunksLoadedWebpackPluginLoadedFiles.indexOf(file) === -1) {
+          allChunksLoadedWebpackPluginLoadedFiles.push(file);
+          if(allChunksLoadedWebpackPluginLoadedFiles.length === allFiles.length) {
+            setTimeout(function() {
+              alert('All chunks loaded!');
+            }, 0);
+          }
+        }
+      }
+    </script>
+    <link href="app.css" rel="stylesheet" onload="this.onload=null;allChunksLoadedWebpackPlugin('app', 'app.css');">
+  </head>
+  <body>
+    <script src="app.js" onload="this.onload=null;allChunksLoadedWebpackPlugin('app', 'app.js');"></script>
+  </body>
+</html>
+```
+
 ## Credit
 * [HTML Webpack Plugin](https://github.com/jantimon/html-webpack-plugin) - Simplifies creation of HTML files to serve your webpack bundles.
 
