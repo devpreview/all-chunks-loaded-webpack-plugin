@@ -14,12 +14,23 @@ export default class AllChunksLoadedWebpackPlugin {
     }
 
     public apply(compiler: WebpackCompiler): void {
-        compiler.plugin('compilation', (compilation) => {
-            compilation.plugin('html-webpack-plugin-alter-asset-tags', (data: any, next: (err: Error | null, data: any) => void) => {
-                let cb = new Callback(this.options, compilation.options.output.publicPath || '');
-                next(null, cb.makeLoadedCallback(data));
+        if (compiler.hooks == undefined) {
+            // Webpack 3
+            compiler.plugin('compilation', (compilation) => {
+                compilation.plugin('html-webpack-plugin-alter-asset-tags', (data: any, next: (err: Error | null, data: any) => void) => {
+                    let cb = new Callback(this.options, compilation.options.output.publicPath || '');
+                    next(null, cb.makeLoadedCallback(data));
+                });
             });
-        });
+        } else {
+            // Webpack 4
+            compiler.hooks.compilation.tap("AsyncStylesheetWebpackPlugin", (compilation: any) => {
+                compilation.hooks.htmlWebpackPluginAlterAssetTags.tap("AsyncStylesheetWebpackPlugin", (data: any) => {
+                    let cb = new Callback(this.options, compilation.options.output.publicPath || '');
+                    return cb.makeLoadedCallback(data);
+                });
+            });
+        }
     }
 
 }
