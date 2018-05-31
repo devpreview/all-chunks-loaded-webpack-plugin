@@ -1,6 +1,6 @@
 {
   "name": "all-chunks-loaded-webpack-plugin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "deprecated": false,
   "license": "MIT",
   "description": "Provide callback executed after all chunks loaded",
