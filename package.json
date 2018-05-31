@@ -29,7 +29,7 @@
   "types": "./dist/src/main/plugin.d.ts",
   "scripts": {
     "prebuild": "npm run clean",
-    "build": "webpack --config webpack.config.js --progress --profile --bail",
+    "build": "webpack --mode production --config webpack.config.js --progress --profile --bail",
     "clean": "rimraf -- dist all-chunks-loaded-webpack-plugin-*.tgz",
     "clean:all": "npm run clean && rimraf -- node_modules package-lock.json"
   },
@@ -39,13 +39,13 @@
   },
   "devDependencies": {
     "@types/html-webpack-plugin": "2.30.3",
-    "@types/node": "8.9.5",
-    "@types/webpack": "3.8.10",
+    "@types/node": "8.10.17",
+    "@types/webpack": "4.4.0",
     "rimraf": "2.6.2",
-    "ts-loader": "3.5.0",
-    "typescript": "2.7.2",
-    "webpack": "3.11.0",
-    "webpack-node-externals": "1.6.0"
+    "ts-loader": "4.3.0",
+    "typescript": "2.8.4",
+    "webpack": "4.10.2",
+    "webpack-cli": "2.1.4"
   },
   "files": [
     "dist/plugin.js",
