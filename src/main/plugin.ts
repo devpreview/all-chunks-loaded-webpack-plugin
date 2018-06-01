@@ -3,6 +3,7 @@ import { Callback } from "./callback";
 
 export interface AllChunksLoadedWebpackPluginOptions {
     callback: string;
+    errorCallback?: string;
     chunks?: string[];
     excludeChunks?: string[];
 }
