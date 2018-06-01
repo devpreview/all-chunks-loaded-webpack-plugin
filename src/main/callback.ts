@@ -8,11 +8,18 @@ export class Callback {
     public constructor(
         protected options: AllChunksLoadedWebpackPluginOptions,
         protected publicPath: string
-    ) {}
+    ) {
+    }
 
     public makeLoadedCallback(data: any): any {
         for (let chunk of data.chunks) {
             for (let name of chunk.names) {
+                if (this.options.chunks && this.options.chunks.indexOf(name) == -1) {
+                    continue;
+                }
+                if (this.options.excludeChunks && this.options.excludeChunks.indexOf(name) > -1) {
+                    continue;
+                }
                 if (!this.chunks.has(name)) {
                     this.chunks.set(name, []);
                 }
@@ -20,6 +27,16 @@ export class Callback {
             }
         }
         for (let tag of [].concat(data.head, data.body)) {
+            let chunk = this.getChunk(data.chunks, tag);
+            if (chunk == null) {
+                continue;
+            }
+            if (this.options.chunks && this.options.chunks.indexOf(chunk) == -1) {
+                continue;
+            }
+            if (this.options.excludeChunks && this.options.excludeChunks.indexOf(chunk) > -1) {
+                continue;
+            }
             if (tag.tagName === 'script' && tag.attributes && tag.attributes.src) {
                 this.addOnload(tag.attributes.src, tag);
             }
@@ -76,6 +93,27 @@ export class Callback {
             '}' +
             '}';
         return loadedScript;
+    }
+
+    protected getChunk(chunks: any[], tag: any): string | null {
+        let src: string = null;
+        if (tag.tagName === 'script' && tag.attributes && tag.attributes.src) {
+            src = tag.attributes.src;
+        }
+        if (tag.tagName === 'link' && tag.attributes && tag.attributes.href) {
+            src = tag.attributes.href;
+        }
+        if (!src) {
+            return null;
+        }
+        for (let chunk of chunks) {
+            for (let file of chunk.files) {
+                if (src.endsWith(file)) {
+                    return chunk.id;
+                }
+            }
+        }
+        return null;
     }
 
 }
