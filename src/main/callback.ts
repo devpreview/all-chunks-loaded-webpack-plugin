@@ -72,6 +72,10 @@ export class Callback {
                 }
                 tag.attributes.onload = tag.attributes.onload ? tag.attributes.onload : '';
                 tag.attributes.onload += "this.onload=null;allChunksLoadedWebpackPlugin('" + chunk + "', '" + filename + "');";
+                if (this.options.errorCallback) {
+                    tag.attributes.onerror = tag.attributes.onerror ? tag.attributes.onerror : '';
+                    tag.attributes.onerror += "this.onerror=null;allChunksLoadedWebpackPluginError('" + chunk + "', '" + filename + "');";
+                }
                 break;
             }
         }
@@ -92,6 +96,11 @@ export class Callback {
             '}' +
             '}' +
             '}';
+        if (this.options.errorCallback) {
+            loadedScript += 'function allChunksLoadedWebpackPluginError(chunk, file) {' +
+                'setTimeout(function(){' + this.options.errorCallback + '},0);' +
+                '}';
+        }
         return loadedScript;
     }
 
