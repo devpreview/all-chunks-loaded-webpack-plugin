@@ -70,6 +70,7 @@ export class Callback {
                     _chunksFiles.push(filename);
                     this.chunksFiles.set(chunk, _chunksFiles);
                 }
+
                 tag.attributes.onload = tag.attributes.onload ? tag.attributes.onload : '';
                 tag.attributes.onload += "this.onload=null;allChunksLoadedWebpackPlugin('" + chunk + "', '" + filename + "');";
                 if (this.options.errorCallback) {
@@ -97,8 +98,12 @@ export class Callback {
             '}' +
             '}';
         if (this.options.errorCallback) {
-            loadedScript += 'function allChunksLoadedWebpackPluginError(chunk, file) {' +
+            loadedScript += 'var allChunksLoadedWebpackPluginHasError = false;' +
+                'function allChunksLoadedWebpackPluginError(chunk, file) {' +
+                'if(!allChunksLoadedWebpackPluginHasError) {' +
+                'allChunksLoadedWebpackPluginHasError = true;' +
                 'setTimeout(function(){' + this.options.errorCallback + '},0);' +
+                '}' +
                 '}';
         }
         return loadedScript;
