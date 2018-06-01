@@ -76,7 +76,7 @@ You can pass a hash of configuration options to `all-chunks-loaded-webpack-plugi
 |:--:|:--:|:-----:|:----------|
 |**`callback`**|`{String}`|`undefined`|Your callback called after all chunks loaded|
 |`chunks`|`{String[]}`|`null`|Allows you to callback called only some chunks loaded|
-|`excludeChunks`|`{String[]}`|`null`|Allows you to skip callback called some chunks|
+|`excludeChunks`|`{String[]}`|`null`|Allows you to skip callback called some chunks loaded|
 
 Here's an example `webpack` config illustrating how to use these options:
 
